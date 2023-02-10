@@ -1,5 +1,7 @@
 /*
- * TODO: explain code with comments where necessary
+ * @TODO: explain code with comments where necessary
+ *        fix balancing of the parse tree
+ *        optimize operations
  */
 
 #pragma once

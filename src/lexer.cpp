@@ -1,5 +1,7 @@
 #include <lexer/lexer.hpp>
 
+#include <iostream>
+
 token tokenize(const char u_data)
 {
     token result;
@@ -12,6 +14,7 @@ token tokenize(const char u_data)
         case '<':
             result.m_cdata = "--ptr;";
             result.m_type = p_operator;
+            break;
         case '+':
             result.m_cdata = "++*ptr;";
             result.m_type = d_operator;
@@ -29,7 +32,7 @@ token tokenize(const char u_data)
             result.m_type = io_command;
             break;
         case '[':
-            result.m_cdata = "while (*ptr != 0) {";
+            result.m_cdata = "while(*ptr != 0){";
             result.m_type = l_punctuator;
             break;
         case ']':

@@ -28,13 +28,22 @@ void print_tree(const node* head)
 }
 
 auto main(int argc, char** argv) -> int {
-    if (argv[1] == NULL) {
-        std::cerr << "specify a file\n";
-        return -1;
+    {
+        if (argv[1] == NULL) {
+            std::cerr << "fatal: specify a file\n";
+            return -1;
+        }
+        int size = strlen(argv[1]);
+        if (argv[1][size-3] != '.' ||
+            argv[1][size-2] != 'b' ||
+            argv[1][size-1] != 'f') {
+            std::cerr << "fatal: isn't a .bf file\n";
+            return -1;
+        }
     }
     std::ifstream ifile {argv[1], ifile.in };
     if (!ifile) {
-        std::cerr << "file " << argv[1] << "not found\n";
+        std::cerr << "fatal: file " << argv[1] << "not found\n";
         return -1;
     }
 
@@ -48,9 +57,12 @@ auto main(int argc, char** argv) -> int {
 
     // codegen
     std::string ccode = codegen(lex(buffer.str()));
-    std::ofstream ofile {"brainwack.c"};
-    if (!ofile) {
-        std::cerr << "not able to create the output file\n";
-    }
+
+    std::string filename = argv[1];
+    filename[filename.size()-2] = 'c';  // <name>.bf -> <name>.cf
+    filename.pop_back();                // <name>.cf -> <name>.c
+    std::ofstream ofile {filename};
+    if (!ofile) { std::cerr << "fatal: not able to create the output .c file\n"; return -1; }
+
     ofile << ccode;
 }
