@@ -1,3 +1,11 @@
+/*
+ * @TODO:
+ *      + use as much std:: as possible, so far
+ *           i'm basically writing C-with-classes
+ *           code more rather than C++, which is
+ *           counter-productive, and also requires
+ *           a lot of unnecessary boilerplate code
+ */
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -5,15 +13,15 @@
 
 #include <brainwhack.hpp>
 
-void print_vector(const std::vector <token>&& vec)
+/*void print_vector(const std::vector <l_token>&& vec)
 {
     for (auto& x: vec) {
         std::cout << x.m_data << " ";
     }
     std::cout << "\n";
-}
+}*/
 
-void print_tree(const std::string& prefix, const node* head, bool isLeft)
+/*void print_tree(const std::string& prefix, const node* head, bool isLeft)
 {
     if( head != nullptr ) {
         std::cout << prefix;
@@ -22,12 +30,12 @@ void print_tree(const std::string& prefix, const node* head, bool isLeft)
         print_tree( prefix + (isLeft ? "│ " : "  "), head->m_left, true);
         print_tree( prefix + (isLeft ? "│ " : "  "), head->m_right, false);
     }
-}
+}*/
 
-void print_tree(const node* head)
+/*void print_tree(const p_abstract_syntax_tree tree)
 {
-    print_tree("", head, false);    
-}
+    //print_tree("", tree->get_head(), false);    
+}*/
 
 auto main(int argc, char** argv) -> int {
     {
@@ -52,17 +60,42 @@ auto main(int argc, char** argv) -> int {
     std::stringstream buffer;
     buffer << ifile.rdbuf();
 
-    // lex the file and print token stream (works correctly)
+    /*
+     * lexer
+     */
+
+#ifdef DEBUG
     // print_vector(lex(buffer.str()));
+#endif
 
+#ifdef TEST_PARSER
+    /*
+     * parser (needs rework)
+     */
 
-    // parser (doesn't work correctly, or does it?)
-    node_tree* pt = parse(lex(buffer.str()));
-    print_tree(pt->get_head());
+    parse(lex(buffer.str()));
+#endif
 
+#ifdef DEBUG
+    // print_tree(pt->get_head());
+#endif
 
-    // codegen (works with vectors)
+    /* 
+     * codegen
+     */
+
+    // just do a syntax check
+    //print_tree(parse(lex(buffer.str())));
+
+    // works okay with vectors
     std::string ccode = codegen(lex(buffer.str()));
+
+    // doesn't work with parser :(
+    // std::string ccode = codegen(parse(lex(buffer.str())));
+
+    /* 
+     * copy result to file
+     */
 
     // move this to header probably
     std::string filename = argv[1];
