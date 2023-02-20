@@ -1,52 +1,31 @@
 /*
- * @TODO: explain code with comments where necessary
- *        fix balancing of the parse tree
- *        fix deleting issue (or use smart pointers)
- *        check for opened parantheses
- *        optimize operations
+ * @TODO:
+ *      + finally implement parser
+ *      + add bracket check
  */
 
 #pragma once
 
 #include <lexer/lexer.hpp>
 
-struct node {
-    node* m_root;   // questionable whether necessary
-    node* m_left;
-    node* m_right;
-    token m_data;
+#include "stmt.hpp"
+#include "expr.hpp"
 
-    inline const int  line()   const { return m_data.m_line;   }
-    inline const int column()  const { return m_data.m_column; }
-    inline const char& get()   const { return m_data.m_data;   }
-};
-
-class node_tree {
+class parse_tree {
     private:
-        node* m_head;
+        std::vector <statement_*> data_;
     public:
-        node_tree() 
+        inline void add_statement(statement_* other) noexcept
         {
-            m_head = new node;
-            m_head->m_right = nullptr;
-            m_head->m_left = nullptr;
+            data_.emplace_back(other);
         }
 
-        inline char get() const         { return m_head->m_data.m_data; }
-        inline node* get_head() const   { return m_head; }
-
-        void add_node(token data) noexcept;
-        static void add_left (node* head, token data) noexcept;
-        static void add_right(node* head, token data) noexcept;
-        static void delete_nodes(node* head) noexcept;
-
-        void add_token(token data) noexcept;
-
-        ~node_tree()
+        ~parse_tree()
         {
-            delete_nodes(m_head);
+            for (auto& x: data_) {
+                delete x;
+            }
         }
 };
 
-node* check_parantheses(node* head);
-node_tree* parse(std::vector <token> token_stream);
+void* parse(const std::vector <token_> data);
