@@ -3,20 +3,22 @@
 #include <fstream>
 #include <sstream>
 
-//#include <parser/parser.hpp>
-#include <codegen/codegen.hpp>
+#include <brainwhack.hpp>
+
+void print_vector(const std::vector <token>&& vec)
+{
+    for (auto& x: vec) {
+        std::cout << x.m_data << " ";
+    }
+    std::cout << "\n";
+}
 
 void print_tree(const std::string& prefix, const node* head, bool isLeft)
 {
-    if( head != nullptr )
-    {
+    if( head != nullptr ) {
         std::cout << prefix;
-
         std::cout << (isLeft ? "├ " : "└ " );
-
         std::cout << head->m_data.m_data << std::endl;
-
-        // enter the next tree level - left and right branch
         print_tree( prefix + (isLeft ? "│ " : "  "), head->m_left, true);
         print_tree( prefix + (isLeft ? "│ " : "  "), head->m_right, false);
     }
@@ -43,21 +45,26 @@ auto main(int argc, char** argv) -> int {
     }
     std::ifstream ifile {argv[1], ifile.in };
     if (!ifile) {
-        std::cerr << "fatal: file " << argv[1] << "not found\n";
+        std::cerr << "fatal: file " << argv[1] << " not found\n";
         return -1;
     }
 
-    // lex the file and print token stream
     std::stringstream buffer;
     buffer << ifile.rdbuf();
 
-    // parser (doesn't work correctly)
-    // node_tree pt = parse(lex(buffer.str()));
-    // print_tree(pt.get_head());
+    // lex the file and print token stream (works correctly)
+    // print_vector(lex(buffer.str()));
 
-    // codegen
+
+    // parser (doesn't work correctly, or does it?)
+    node_tree* pt = parse(lex(buffer.str()));
+    print_tree(pt->get_head());
+
+
+    // codegen (works with vectors)
     std::string ccode = codegen(lex(buffer.str()));
 
+    // move this to header probably
     std::string filename = argv[1];
     filename[filename.size()-2] = 'c';  // <name>.bf -> <name>.cf
     filename.pop_back();                // <name>.cf -> <name>.c

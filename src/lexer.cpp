@@ -2,57 +2,65 @@
 
 #include <iostream>
 
-token tokenize(const char u_data)
+token_ analyze(const char data)
 {
-    token result;
+    token_ result;
+    static size_t line = 1;
+    static size_t column = 0;
 
-    switch (u_data) {
+    switch (data) {
         case '>':
-            result.m_cdata = "++ptr;";
-            result.m_type = p_operator;
+            result.type = ptr_op_;
             break;
         case '<':
-            result.m_cdata = "--ptr;";
-            result.m_type = p_operator;
+            result.type = ptr_op_;
             break;
         case '+':
-            result.m_cdata = "++*ptr;";
-            result.m_type = d_operator;
+            result.type = data_op_;
             break;
         case '-':
-            result.m_cdata = "--*ptr;";
-            result.m_type = d_operator;
+            result.type = data_op_;
             break;
         case '.':
-            result.m_cdata = "putchar(*ptr);";
-            result.m_type = io_command;
+            result.type = io_cmd_;
             break;
         case ',':
-            result.m_cdata = "*ptr = getchar();";
-            result.m_type = io_command;
+            result.type = io_cmd_;
             break;
         case '[':
-            result.m_cdata = "while(*ptr != 0){";
-            result.m_type = l_punctuator;
+            result.type = bracket_open_;
             break;
         case ']':
-            result.m_cdata = "}";
-            result.m_type = l_punctuator;
+            result.type = bracket_close_;
             break;
+        case '\t':
+            column += 4;
+            result.type = comment_;
+            return result;
+        case '\n':
+            ++line;
+            column = 0;
+            result.type = comment_;
+            return result;
         default:
-            result.m_cdata = "\0";
-            result.m_type = comment;
-            result.m_data = '\0';
+            result.type = comment_;
+            ++column;
             return result;
     }
+    ++column;
 
-    result.m_data = u_data;
+    result.line = line;
+    result.column = column;
+    result.data = data;
+
     return result;
 }
 
-std::vector <token> lex(std::string u_input)
+std::vector <token_> lex(std::string input)
 {
-    std::vector <token> result {};
-    for (auto& x: u_input) { result.push_back(tokenize(x)); }
+    std::vector <token_> result {};
+    for (auto& x: input) {
+        result.push_back(analyze(x));
+    }
     return result;
 }
