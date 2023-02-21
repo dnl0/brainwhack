@@ -33,4 +33,10 @@ struct binary_operation_ : expression_ {
     {
         expression_type = binary_operation_expr_;
     }
+
+    ~binary_operation_()
+    {
+        if (left) delete left;
+        if (right) delete right;
+    }
 };
