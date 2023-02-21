@@ -1,10 +1,8 @@
 /*
  * @TODO:
- *      + use as much std:: as possible, so far
- *           i'm basically writing C-with-classes
- *           code more rather than C++, which is
- *           counter-productive, and also requires
- *           a lot of unnecessary boilerplate code
+ *      + parser
+ *      + C codegen from parser
+ *      + interpreter
  */
 #include <iostream>
 #include <vector>
@@ -13,29 +11,43 @@
 
 #include <brainwhack.hpp>
 
-/*void print_vector(const std::vector <l_token>&& vec)
+#ifdef DEBUG_ALL
+
+#define DEBUG
+#define TEST_LEXER
+#define TEST_PARSER
+#define TEST_CODEGEN
+
+#endif // DEBUG_ALL
+
+#ifdef DEBUG
+
+#ifdef TEST_LEXER
+void print_vector(const std::vector <token_>&& vec)
 {
     for (auto& x: vec) {
-        std::cout << x.m_data << " ";
+        std::cout << x.data << " ";
     }
     std::cout << "\n";
-}*/
+}
+#endif // TEST_LEXER 
 
-/*void print_tree(const std::string& prefix, const node* head, bool isLeft)
+#ifdef TEST_PARSER
+void print_tree(parse_tree& pt)
 {
-    if( head != nullptr ) {
-        std::cout << prefix;
-        std::cout << (isLeft ? "├ " : "└ " );
-        std::cout << head->m_data.m_data << std::endl;
-        print_tree( prefix + (isLeft ? "│ " : "  "), head->m_left, true);
-        print_tree( prefix + (isLeft ? "│ " : "  "), head->m_right, false);
+    for (auto it = pt.begin(), end = pt.end(); it != end; ++it) {
+        std::cout << (*it)->symbol << " ";
+        auto in = *it;
+        while (in->next) {
+            std::cout << in->next->symbol << " ";
+            in = in->next;
+        }
     }
-}*/
+    std::cout << "\n";
+}
+#endif // TEST_PARSER
 
-/*void print_tree(const p_abstract_syntax_tree tree)
-{
-    //print_tree("", tree->get_head(), false);    
-}*/
+#endif // DEBUG
 
 auto main(int argc, char** argv) -> int {
     {
@@ -59,45 +71,28 @@ auto main(int argc, char** argv) -> int {
 
     std::stringstream buffer;
     buffer << ifile.rdbuf();
-
-    /*
-     * lexer
-     */
+    ifile.close();
 
 #ifdef DEBUG
-    // print_vector(lex(buffer.str()));
-#endif
+
+#ifdef TEST_LEXER
+    print_vector( lex(buffer.str()) );
+#endif // TEST_LEXER
 
 #ifdef TEST_PARSER
-    /*
-     * parser (needs rework)
-     */
 
-    parse(lex(buffer.str()));
-#endif
+    auto lexed  = lex(buffer.str());
+    std::cout << "lexer has lexed\n";
+    auto parsed = parse(lexed);
+    std::cout << "parser has parsed\n";
 
-#ifdef DEBUG
-    // print_tree(pt->get_head());
-#endif
+    print_tree(parsed);
+#endif // TEST_PARSER
 
-    /* 
-     * codegen
-     */
-
-    // just do a syntax check
-    //print_tree(parse(lex(buffer.str())));
-
-    // works okay with vectors
+#ifdef TEST_CODEGEN
     std::string ccode = codegen(lex(buffer.str()));
 
-    // doesn't work with parser :(
-    // std::string ccode = codegen(parse(lex(buffer.str())));
-
-    /* 
-     * copy result to file
-     */
-
-    // move this to header probably
+    // @TODO: move this to header probably
     std::string filename = argv[1];
     filename[filename.size()-2] = 'c';  // <name>.bf -> <name>.cf
     filename.pop_back();                // <name>.cf -> <name>.c
@@ -105,4 +100,8 @@ auto main(int argc, char** argv) -> int {
     if (!ofile) { std::cerr << "fatal: not able to create the output .c file\n"; return -1; }
 
     ofile << ccode;
+    ofile.close();
+#endif // TEST_CODEGEN
+
+#endif // DEBUG
 }
