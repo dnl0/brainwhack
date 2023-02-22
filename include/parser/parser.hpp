@@ -1,8 +1,3 @@
-/*
- * @TODO:
- *      + add bracket check
- */
-
 #pragma once
 
 #include <iostream>

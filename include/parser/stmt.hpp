@@ -45,12 +45,6 @@ struct statement_ {
 
     virtual ~statement_()
     {
-        while (next->next) {
-            statement_* temp = next;
-            next = next->next;
-            delete temp;
-        }
-        std::cout << "here\n";
         if (next) delete next;
     }
 
@@ -60,12 +54,12 @@ struct statement_ {
 struct expression_statement_: statement_ {
     expression_* body = nullptr;
 
-    expression_statement_(expression_* u_body)
+    /*expression_statement_(expression_* u_body)
         :
         body {u_body}
     {
         statement_type = expr_stmt_;
-    }
+    }*/
 
     expression_statement_(expression_* u_body, const char u_symbol)
         :
@@ -103,5 +97,13 @@ struct control_statement_ : statement_ {
     {
         if (body) delete body;
         if (condition) delete condition;
+    }
+};
+
+struct io_statement_ : statement_ {
+    // @TODO
+    io_statement_(const char u_ch)
+    {
+        symbol = u_ch;
     }
 };
