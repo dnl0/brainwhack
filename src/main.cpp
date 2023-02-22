@@ -76,16 +76,19 @@ auto main(int argc, char** argv) -> int {
 #ifdef DEBUG
 
 #ifdef TEST_LEXER
+    std::cout << text::italic("log: lexer has lexed\n\n");
+    std::cout << "log: lex stream:\n";
     print_vector( lex(buffer.str()) );
 #endif // TEST_LEXER
 
 #ifdef TEST_PARSER
 
     auto lexed  = lex(buffer.str());
-    std::cout << "lexer has lexed\n";
+    std::cout << "log: lexer has lexed\n";
     auto parsed = parse(lexed);
-    std::cout << "parser has parsed\n";
+    std::cout << "log: parser has parsed\n\n";
 
+    std::cout << "log: de-parsed tree:\n";
     print_tree(parsed);
 #endif // TEST_PARSER
 
