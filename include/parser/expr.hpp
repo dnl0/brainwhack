@@ -34,6 +34,9 @@ struct binary_operation_ : expression_ {
         expression_type = binary_operation_expr_;
     }
 
+    binary_operation_(const binary_operation_&) = delete;
+    binary_operation_& operator=(const binary_operation_&) = delete;
+
     ~binary_operation_()
     {
         if (left) delete left;
