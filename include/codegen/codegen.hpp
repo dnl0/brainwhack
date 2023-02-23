@@ -11,5 +11,5 @@
  *          C code formatted
  */
 
-//std::string codegen(const parse_tree& u_data);                 // codegen from parse tree (safer) (doesn't work)
+std::string codegen(parse_tree&& u_data);                 // codegen from parse tree (safer) (doesn't work)
 std::string codegen(const std::vector <token_>& u_data); // codegen from token stream (no check at all) (WIP)
