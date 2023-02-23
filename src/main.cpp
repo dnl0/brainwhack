@@ -1,9 +1,3 @@
-/*
- * @TODO:
- *      + parser
- *      + C codegen from parser
- *      + interpreter
- */
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -26,24 +20,34 @@
 void print_vector(const std::vector <token_>&& vec)
 {
     for (auto& x: vec) {
-        std::cout << x.data << " ";
+        if (x.type != comment_)
+            std::cout << x.data << " ";
     }
     std::cout << "\n";
 }
 #endif // TEST_LEXER 
 
 #ifdef TEST_PARSER
+void print_list(std::list <statement_*> l)
+{
+    for (auto& x: l) {
+        std::cout << ((*x).symbol) << " ";
+        if ((*x).body().size() > 0) {
+            print_list((*x).body());
+            std::cout << "] ";
+        }
+    }
+}
+
 void print_tree(parse_tree& pt)
 {
     for (auto it = pt.begin(), end = pt.end(); it != end; ++it) {
-        std::cout << (*it)->symbol << " ";
-        auto in = *it;
-        while (in->next) {
-            std::cout << in->next->symbol << " ";
-            in = in->next;
-        }
+        std::cout << (*it)->symbol;
+
+        print_list((*it)->body());
+
+        std::cout << "\n";
     }
-    std::cout << "\n";
 }
 #endif // TEST_PARSER
 
@@ -76,7 +80,6 @@ auto main(int argc, char** argv) -> int {
 #ifdef DEBUG
 
 #ifdef TEST_LEXER
-    std::cout << text::italic("log: lexer has lexed\n\n");
     std::cout << "log: lex stream:\n";
     print_vector( lex(buffer.str()) );
 #endif // TEST_LEXER
@@ -93,7 +96,7 @@ auto main(int argc, char** argv) -> int {
 #endif // TEST_PARSER
 
 #ifdef TEST_CODEGEN
-    std::string ccode = codegen(lex(buffer.str()));
+    std::string ccode = codegen(parse(lex(buffer.str())));
 
     // @TODO: move this to header probably
     std::string filename = argv[1];
