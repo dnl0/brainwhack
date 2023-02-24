@@ -1,6 +1,5 @@
 #include <lexer/lexer.hpp>
 
-#include <iostream>
 
 token_ analyze(const char data)
 {

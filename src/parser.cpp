@@ -12,6 +12,7 @@
 #include <parser/parser.hpp>
 #include <utils/text.hpp>
 
+#include <iostream>
 #include <functional>
 
 #ifndef PTR_

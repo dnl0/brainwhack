@@ -2,9 +2,9 @@ parser (wip)
 
 the parser in its current state is very wanky, and needs
 best-case revision worst-case rework, but as of now it does
-work, gives an appropriate result, and doesn't leak (as far
-as i know), so i'm gonna leave it at that as of now, and fix
-the code issues later to make it ""better"".
+work, gives an appropriate result, and doesn't leak (i hope
+but not confirmed), so i'm gonna leave it at that as of now, 
+and fix the code issues later to make it ""better"".
 
 of course with BF being this simple and linear language one
 may wonder why would it even need a parser in the first place,
@@ -28,5 +28,6 @@ hierarchy doesn't make much sense, and there is a lot of
 code duplication in places, and there's practically no error
 handling, i haven't implemented scope yet, i use passing by
 copy too much (i just hope the compiler optimizes those),
+i include headers where i shouldn't, there're leaks i think,
 the naming sucks, and i really need to use smart pointers,
 but i can assure you some of these gonna be fixed soon-TM.

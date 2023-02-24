@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <iostream>
 #include <list>
 
 #include <lexer/lexer.hpp>
