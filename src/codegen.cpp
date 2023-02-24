@@ -1,30 +1,44 @@
 #include <codegen/codegen.hpp>
 
-static std::string
-bf_to_c(const char ch)
-{
-    switch (ch) {
-        case '>':
-            return "++ptr;";
-        case '<':
-            return "--ptr;";
-        case '+':
-            return "++*ptr;";
-        case '-':
-            return "--*ptr;";
-        case '.':
-            return "putchar(*ptr);";
-        case ',':
-            return "*ptr = getchar();";
-        case '[':
-            return "while(*ptr != 0){";
-        case ']':
-            return "}";
-        default: break;
+namespace {
+    std::string
+    bf_to_c(const char ch)
+    {
+        switch (ch) {
+            case '>':
+                return "++ptr;";
+            case '<':
+                return "--ptr;";
+            case '+':
+                return "++*ptr;";
+            case '-':
+                return "--*ptr;";
+            case '.':
+                return "putchar(*ptr);";
+            case ',':
+                return "*ptr = getchar();";
+            case '[':
+                return "while(*ptr != 0){";
+            case ']':
+                return "}";
+            default: break;
+        }
+
+        return "";
     }
 
-    return "";
-}
+    void 
+    append_code(std::list <statement_*> source, std::string& target)
+    {
+        for (auto& x: source) {
+            target += bf_to_c((*x).symbol);
+            if ((*x).body().size() > 0) {
+                append_code((*x).body(), target);
+                target += "}";
+            }
+        }
+    }
+} // namespace
 
 std::string
 codegen(const std::vector <token_>& u_data)
@@ -40,18 +54,6 @@ codegen(const std::vector <token_>& u_data)
 
     result += "}";
     return result;
-}
-
-static void 
-append_code(std::list <statement_*> source, std::string& target)
-{
-    for (auto& x: source) {
-        target += bf_to_c((*x).symbol);
-        if ((*x).body().size() > 0) {
-            append_code((*x).body(), target);
-            target += "}";
-        }
-    }
 }
 
 std::string 

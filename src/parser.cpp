@@ -19,91 +19,93 @@
 #define PTR_ -1
 #endif
 
-static op_type_ 
-char2type(const char ch)
-{
-    switch (ch) {
-        case '+':
-        case '>':
-            return plus_;
-        case '-':
-        case '<':
-            return minus_;
-    }
-
-    std::cerr << text::bold("warn (parser)") << ": statement's symbol not found \n";
-    exit(EXIT_FAILURE);
-    return err_;
-}
-
-static io_statement_*
-create_io_stmt(const char ch)
-{
-    return new io_statement_ {ch};
-}
-
-static expression_statement_* 
-create_expr_stmt(const char ch)
-{
-    return  new expression_statement_ {                 \
-                new binary_operation_ {                 \
-                    new integer_literal_ {PTR_},        \
-                    equal_,                             \
-                    new binary_operation_ {             \
-                        new integer_literal_ {PTR_},    \
-                        char2type(ch),                  \
-                        new integer_literal_ {1}        \
-                    }                                   \
-                },                                      \
-                ch                                      \
-    };
-}
-
-static control_statement_* 
-create_ctrl_stmt()
-{
-    return  new control_statement_ {                    \
-                new binary_operation_ {                 \
-                    new integer_literal_ {PTR_},        \
-                    not_equal_,                         \
-                    new integer_literal_ {0}            \
-                },                                      \
-                new statement_                          \
-    };
-}
-
-static bool 
-add_to_ctrl_stmt(std::vector <token_>::iterator& source_begin, 
-                 const std::vector <token_>::iterator& source_end,
-                 statement_* target)
-{
-    for (; source_begin != source_end; ++source_begin) {
-        switch ((*source_begin).type) {
-            case bracket_open_:
-                target->emplace_back(create_ctrl_stmt());
-                ++source_begin; // skip the bracket
-                add_to_ctrl_stmt(source_begin, source_end, target->back());
-                break;
-            case bracket_close_:
-                target->terminated = true;
-                ++source_begin;
-                return true;
-            case io_cmd_:
-                target->emplace_back(create_io_stmt((*source_begin).data));
-                break;
-            case data_op_:
-            case ptr_op_:
-                target->emplace_back(create_expr_stmt((*source_begin).data));
-                break;
-            default: break;
+namespace {
+    op_type_ 
+    char2type(const char ch)
+    {
+        switch (ch) {
+            case '+':
+            case '>':
+                return plus_;
+            case '-':
+            case '<':
+                return minus_;
         }
+
+        std::cerr << text::bold("warn (parser)") << ": statement's symbol not found \n";
+        exit(EXIT_FAILURE);
+        return err_;
     }
 
-    std::clog << text::bold("fatal") << ": bracket's not closed\n"; // move to err handling
-    exit(EXIT_FAILURE);
+    io_statement_*
+    create_io_stmt(const char ch)
+    {
+        return new io_statement_ {ch};
+    }
 
-    return false;
-}
+    expression_statement_* 
+    create_expr_stmt(const char ch)
+    {
+        return  new expression_statement_ {                 \
+                    new binary_operation_ {                 \
+                        new integer_literal_ {PTR_},        \
+                        equal_,                             \
+                        new binary_operation_ {             \
+                            new integer_literal_ {PTR_},    \
+                            char2type(ch),                  \
+                            new integer_literal_ {1}        \
+                        }                                   \
+                    },                                      \
+                    ch                                      \
+        };
+    }
+
+    control_statement_* 
+    create_ctrl_stmt()
+    {
+        return  new control_statement_ {                    \
+                    new binary_operation_ {                 \
+                        new integer_literal_ {PTR_},        \
+                        not_equal_,                         \
+                        new integer_literal_ {0}            \
+                    },                                      \
+                    new statement_                          \
+        };
+    }
+
+    bool 
+    add_to_ctrl_stmt(std::vector <token_>::iterator& source_begin, 
+                     const std::vector <token_>::iterator& source_end,
+                     statement_* target)
+    {
+        for (; source_begin != source_end; ++source_begin) {
+            switch ((*source_begin).type) {
+                case bracket_open_:
+                    target->emplace_back(create_ctrl_stmt());
+                    ++source_begin; // skip the bracket
+                    add_to_ctrl_stmt(source_begin, source_end, target->back());
+                    break;
+                case bracket_close_:
+                    target->terminated = true;
+                    ++source_begin;
+                    return true;
+                case io_cmd_:
+                    target->emplace_back(create_io_stmt((*source_begin).data));
+                    break;
+                case data_op_:
+                case ptr_op_:
+                    target->emplace_back(create_expr_stmt((*source_begin).data));
+                    break;
+                default: break;
+            }
+        }
+
+        std::clog << text::bold("fatal") << ": bracket's not closed\n"; // move to err handling
+        exit(EXIT_FAILURE);
+
+        return false;
+    }
+} // namespace
 
 parse_tree
 parse(std::vector <token_> data)
