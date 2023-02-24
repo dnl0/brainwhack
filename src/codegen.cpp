@@ -31,10 +31,12 @@ namespace {
     append_code(std::list <statement_*> source, std::string& target)
     {
         for (auto& x: source) {
-            target += bf_to_c((*x).symbol);
-            if ((*x).body().size() > 0) {
-                append_code((*x).body(), target);
-                target += "}";
+            target += bf_to_c((*x).id);
+            if ((*x).statement_type == ctrl_stmt_) {
+                if (static_cast <control_statement_*> (x)->body.size() > 0) {
+                    append_code(static_cast <control_statement_*> (x)->body, target);
+                    target += "}";
+                }
             }
         }
     }

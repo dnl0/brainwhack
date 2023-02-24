@@ -31,9 +31,9 @@ void print_vector(const std::vector <token_>&& vec)
 void print_list(std::list <statement_*> l)
 {
     for (auto& x: l) {
-        std::cout << ((*x).symbol) << " ";
-        if ((*x).body().size() > 0) {
-            print_list((*x).body());
+        std::cout << ((*x).id) << " ";
+        if ((*x).statement_type == ctrl_stmt_) {
+            print_list( static_cast <control_statement_*> (x)->body );
             std::cout << "] ";
         }
     }
@@ -41,13 +41,9 @@ void print_list(std::list <statement_*> l)
 
 void print_tree(parse_tree& pt)
 {
-    for (auto it = pt.begin(), end = pt.end(); it != end; ++it) {
-        std::cout << (*it)->symbol;
+    print_list(pt.data());
 
-        print_list((*it)->body());
-
-        std::cout << "\n";
-    }
+    std::cout << "\n";
 }
 #endif // TEST_PARSER
 
