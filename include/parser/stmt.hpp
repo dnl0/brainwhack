@@ -2,7 +2,7 @@
 
 #include "expr.hpp"
 
-enum stmt_type_ { expr_stmt_, ctrl_stmt_, io_stmt_ };
+enum stmt_type_ { expr_stmt_, ctrl_stmt_, input_stmt_, output_stmt_ };
 
 struct statement_ {
     expression_* return_expression;
@@ -51,11 +51,24 @@ struct control_statement_ : statement_ {
     }
 };
 
-struct io_statement_ : statement_ {
+struct input_statement_: statement_ {
     // @TODO
-    io_statement_(const char u_id = '\0')
+    std::function <int(void)> input  = &std::getchar;
+
+    input_statement_(const char u_id = ',')
     {
-        statement_type = io_stmt_;
+        statement_type = output_stmt_;
+        id = u_id;
+    }
+};
+
+struct output_statement_: statement_ {
+    // @TODO
+    std::function <int(int)> output = &std::putchar;
+
+    output_statement_(const char u_id = '.')
+    {
+        statement_type = input_stmt_;
         id = u_id;
     }
 };

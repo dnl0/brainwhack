@@ -21,10 +21,10 @@ namespace {
                 result.type = data_op_;
                 break;
             case '.':
-                result.type = io_cmd_;
+                result.type = output_cmd_;
                 break;
             case ',':
-                result.type = io_cmd_;
+                result.type = input_cmd_;
                 break;
             case '[':
                 result.type = bracket_open_;

@@ -2,7 +2,6 @@
 #include <utils/text.hpp>
 
 #include <iostream>
-#include <functional>
 
 #ifndef PTR_
 #define PTR_ -1
@@ -35,9 +34,9 @@ namespace {
                             new integer_literal_ {PTR_},    \
                             char2type(ch),                  \
                             new integer_literal_ {1}        \
-                        }
-                    },
-                    ch
+                        }                                   \
+                    },                                      \
+                    ch                                      \
         };
     }
 
@@ -54,10 +53,16 @@ namespace {
         };
     }
 
-    io_statement_*
-    create_io_stmt(const char ch = '\0')
+    input_statement_*
+    create_in_stmt(const char ch = ',')
     {
-        return new io_statement_ {ch};
+        return new input_statement_ {ch};
+    }
+
+    output_statement_*
+    create_out_stmt(const char ch = '.')
+    {
+        return new output_statement_ {ch};
     }
     
     bool 
@@ -90,8 +95,11 @@ namespace {
                 case ptr_op_:
                     target.emplace_back(create_expr_stmt((*source_begin).data));
                     break;
-                case io_cmd_:
-                    target.emplace_back(create_io_stmt((*source_begin).data));
+                case input_cmd_:
+                    target.emplace_back(create_in_stmt((*source_begin).data));
+                    break;
+                case output_cmd_:
+                    target.emplace_back(create_out_stmt((*source_begin).data));
                     break;
                 default: break;
             }

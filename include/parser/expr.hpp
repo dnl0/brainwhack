@@ -1,6 +1,6 @@
 #pragma once
 
-enum op_type_   { unknwn_, plus_, minus_, equal_, not_equal_ };
+enum op_type_   { unknwn_ = -1, plus_, minus_, equal_, not_equal_ };
 enum expr_type_ { int_lit_expr_, bin_op_expr_ };
 
 struct expression_ {
