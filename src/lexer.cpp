@@ -20,11 +20,11 @@ namespace {
             case '-':
                 result.type = data_op_;
                 break;
-            case '.':
-                result.type = output_cmd_;
-                break;
             case ',':
                 result.type = input_cmd_;
+                break;
+            case '.':
+                result.type = output_cmd_;
                 break;
             case '[':
                 result.type = bracket_open_;

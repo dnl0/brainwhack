@@ -37,7 +37,7 @@ struct expression_statement_ : statement_ {
 };
 
 struct control_statement_ : statement_ {
-    std::list <statement_*> body {};
+    std::list <statement_*> body;
     expression_* condition;
 
     control_statement_(expression_* u_condition, statement_* u_body, const char u_id = '[')
@@ -52,7 +52,6 @@ struct control_statement_ : statement_ {
 };
 
 struct input_statement_: statement_ {
-    // @TODO
     std::function <int(void)> input  = &std::getchar;
 
     input_statement_(const char u_id = ',')
@@ -63,12 +62,11 @@ struct input_statement_: statement_ {
 };
 
 struct output_statement_: statement_ {
-    // @TODO
     std::function <int(int)> output = &std::putchar;
 
     output_statement_(const char u_id = '.')
     {
-        statement_type = input_stmt_;
+        statement_type = output_stmt_;
         id = u_id;
     }
 };

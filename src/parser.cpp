@@ -3,21 +3,19 @@
 
 #include <iostream>
 
-#ifndef PTR_
-#define PTR_ -1
-#endif
-
 namespace {
     op_type_
     char2type (const char ch)
     {
         switch (ch) {
             case '+':
+                return var_plus_;
             case '-':
-                return plus_;
+                return var_minus_;
             case '>':
+                return ptr_plus_;
             case '<':
-                return minus_;
+                return ptr_minus_;
         }
 
         return unknwn_;
@@ -26,18 +24,43 @@ namespace {
     expression_statement_*
     create_expr_stmt(const char ch)
     {
-        return  new expression_statement_ {                 \
-                    new binary_operation_ {                 \
-                        new integer_literal_ {PTR_},        \
-                        equal_,                             \
+        switch (char2type(ch)) {
+            case var_plus_:
+            case var_minus_:
+                return  
+                    new expression_statement_ {             \
                         new binary_operation_ {             \
-                            new integer_literal_ {PTR_},    \
-                            char2type(ch),                  \
-                            new integer_literal_ {1}        \
-                        }                                   \
-                    },                                      \
-                    ch                                      \
-        };
+                            new integer_literal_ {},        \
+                            assign_,                        \
+                            new binary_operation_ {         \
+                                new integer_literal_ {},    \
+                                char2type(ch),              \
+                                new integer_literal_ {}     \
+                            }                               \
+                        },                                  \
+                        ch                                  \
+                };
+                break;
+            case ptr_plus_:
+            case ptr_minus_:
+                return  
+                    new expression_statement_ {             \
+                        new binary_operation_ {             \
+                            new pointer_ {},                \
+                            assign_,                        \
+                            new binary_operation_ {         \
+                                new pointer_ {},            \
+                                char2type(ch),              \
+                                new integer_literal_ {}     \
+                            }                               \
+                        },                                  \
+                        ch                                  \
+                };
+                break;
+            default: break;
+        }
+
+        return nullptr;
     }
 
     control_statement_* 
@@ -45,9 +68,9 @@ namespace {
     {
         return  new control_statement_ {                    \
                     new binary_operation_ {                 \
-                        new integer_literal_ {PTR_},        \
+                        new integer_literal_ {},            \
                         not_equal_,                         \
-                        new integer_literal_ {0}            \
+                        new integer_literal_ {}             \
                     },                                      \
                     new statement_                          \
         };
@@ -76,6 +99,7 @@ namespace {
             switch ((*source_begin).type) {
                 case bracket_open_:
                     target.emplace_back(create_ctrl_stmt());
+
                     ++bracket_count;
                     ++source_begin; // skip the bracket
 
@@ -88,8 +112,10 @@ namespace {
                         exit(EXIT_FAILURE);
                     }
                     target.back()->terminated = true;
+
                     --bracket_count;
                     ++source_begin;
+
                     return true;
                 case data_op_:
                 case ptr_op_:

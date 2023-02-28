@@ -7,3 +7,4 @@
 #include <lexer/lexer.hpp>
 #include <parser/parser.hpp>
 #include <codegen/codegen.hpp>
+#include <interpreter/interpreter.hpp>
