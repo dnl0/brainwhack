@@ -1,9 +1,9 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <sstream>
 
 #include <brainwhack.hpp>
+#include <utils/text.hpp>
 
 #ifdef DEBUG_ALL
 
@@ -13,6 +13,14 @@
 #define TEST_CODEGEN
 
 #endif // DEBUG_ALL
+
+std::string bf_to_c_filename(const std::string& source)
+{
+    std::string filename = source;
+    filename[filename.size()-2] = 'c';  // <name>.bf -> <name>.cf
+    filename.pop_back();                // <name>.cf -> <name>.c
+    return filename;
+}
 
 #ifdef DEBUG
 
@@ -47,20 +55,20 @@ void print_tree(parse_tree& pt)
 auto main(int argc, char** argv) -> int {
     {
         if (argv[1] == NULL) {
-            std::cerr << "fatal: specify a file\n";
-            return -1;
+            std::cerr << red(bold("\nfatal")) << ": specify a file\n";
+            exit(EXIT_FAILURE);
         }
         int size = strlen(argv[1]);
         if (argv[1][size-3] != '.' ||
             argv[1][size-2] != 'b' ||
             argv[1][size-1] != 'f') {
-            std::cerr << "fatal: isn't a .bf file\n";
-            return -1;
+            std::cerr << red(bold("\nfatal")) << ": isn't a .bf file\n";
+            exit(EXIT_FAILURE);
         }
     }
     std::ifstream ifile {argv[1], ifile.in };
     if (!ifile) {
-        std::cerr << "fatal: file " << argv[1] << " not found\n";
+        std::cerr << red(bold("\nfatal")) << ": file " << argv[1] << " not found\n";
         return -1;
     }
 
@@ -73,14 +81,14 @@ auto main(int argc, char** argv) -> int {
 
 #ifdef TEST_LEXER
     std::cout << "log: lex stream:\n";
-    print_vector( lex(buffer) );
+    print_vector(lex(buffer));
 #endif // TEST_LEXER
 
 #ifdef TEST_PARSER
     auto lexed  = lex(buffer);
-    std::cout << "log: lexer has lexed\n";
+    std::cout << italic("log") << ": lexer has lexed\n";
     auto parsed = parse(lexed);
-    std::cout << "log: parser has parsed\n\n";
+    std::cout << italic("log") << ": parser has parsed\n\n";
 
     std::cout << "log: de-parsed tree:\n";
     print_tree(parsed);
@@ -89,13 +97,11 @@ auto main(int argc, char** argv) -> int {
 #ifdef TEST_CODEGEN
     std::string ccode = codegen(parse(lex(buffer)));
 
-    // @TODO: move this to header probably
-    std::string filename = argv[1];
-    filename[filename.size()-2] = 'c';  // <name>.bf -> <name>.cf
-    filename.pop_back();                // <name>.cf -> <name>.c
-    std::ofstream ofile {filename};
-    if (!ofile) { std::cerr << "fatal: not able to create the output .c file\n"; return -1; }
-
+    std::ofstream ofile {bf_to_c_filename(argv[1])};
+    if (!ofile) {
+        std::cerr << red(bold("\nfatal")) << ": not able to create the output .c file\n"; 
+        exit(EXIT_FAILURE);
+    }
     ofile << ccode;
     ofile.close();
 #endif // TEST_CODEGEN

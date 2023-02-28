@@ -1,8 +1,8 @@
 #pragma once
 
-#include <list>
-
 #include <lexer/lexer.hpp>
+
+#include <list>
 
 #include "stmt.hpp"
 

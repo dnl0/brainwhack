@@ -108,7 +108,7 @@ namespace {
                     break;
                 case bracket_close_:
                     if (!bracket_count) {
-                        std::cerr << text::bold("fatal") << ": unopened bracket\n";
+                        std::cerr << red(bold("\nfatal")) << ": unopened bracket\n";
                         exit(EXIT_FAILURE);
                     }
                     target.back()->terminated = true;
@@ -132,7 +132,7 @@ namespace {
         }
 
         if (bracket_count) {
-            std::cerr << text::bold("fatal") << ": unclosed bracket\n";
+            std::cerr << red(bold("\nfatal")) << ": unclosed bracket\n";
             exit(EXIT_FAILURE);
             return false;
         }
