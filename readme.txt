@@ -1,4 +1,4 @@
-brainwhack (wip)
+brainwhack (wip) -- probably the most convoluted BF interpreter out there.
 
 Brainfuck to C translator and interpreter.
 
