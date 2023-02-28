@@ -32,6 +32,10 @@ parser: $(HEADER) $(SOURCE)
 codegen: $(HEADER) $(SOURCE)
 	$(CXX) $(CXXFLAGS) -DDEBUG -DTEST_CODEGEN -I$(HEADER) $(SOURCE) -o $(TARGET)
 
+.PHONY: interpreter
+interpreter: $(HEADER) $(SOURCE)
+	$(CXX) $(CXXFLAGS) -DDEBUG -DTEST_INTERPRETER -I$(HEADER) $(SOURCE) -o $(TARGET)
+
 .PHONY: debug
 debug: $(HEADER) $(SOURCE)
 	$(CXX) $(CXXFLAGS) -DDEBUG_ALL -I$(HEADER) $(SOURCE) -o $(TARGET)
