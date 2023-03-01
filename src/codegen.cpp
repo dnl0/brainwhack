@@ -28,13 +28,13 @@ namespace {
     }
 
     void 
-    append_code(std::list <statement_*> source, std::string& target)
+    append_code(std::list <std::shared_ptr <statement_>> source, std::string& target)
     {
         for (auto& x: source) {
             target += bf_to_c((*x).id);
             if ((*x).statement_type == ctrl_stmt_) {
-                if (static_cast <control_statement_*> (x)->body.size() > 0) {
-                    append_code(static_cast <control_statement_*> (x)->body, target);
+                if (std::static_pointer_cast <control_statement_> (x)->body.size() > 0) {
+                    append_code(std::static_pointer_cast <control_statement_> (x)->body, target);
                     target += "}";
                 }
             }

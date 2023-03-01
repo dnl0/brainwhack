@@ -91,7 +91,7 @@ namespace {
     bool 
     add_stmt(std::vector <token_>::iterator& source_begin, 
              const std::vector <token_>::iterator& source_end,
-             std::list <statement_*>& target)
+             std::list <std::shared_ptr <statement_>>& target)
     {
         using namespace text;
 
@@ -106,7 +106,7 @@ namespace {
                     ++source_begin; // skip the bracket
 
                     add_stmt(source_begin, source_end, 
-                             static_cast <control_statement_*> (target.back())->body );
+                             std::static_pointer_cast <control_statement_> (target.back())->body );
                     break;
                 case bracket_close_:
                     if (!bracket_count) {

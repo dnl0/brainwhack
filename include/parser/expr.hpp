@@ -30,8 +30,8 @@ struct pointer_ : expression_ {
 };
 
 struct binary_operation_ : expression_ {
-    expression_* left;
-    expression_* right;
+    std::shared_ptr <expression_> left;
+    std::shared_ptr <expression_> right;
     op_type_ operation;
 
     binary_operation_(expression_ *u_left, op_type_ u_operation, expression_* u_right)
@@ -41,14 +41,5 @@ struct binary_operation_ : expression_ {
         operation {u_operation}
     {
         expression_type = bin_op_expr_;
-    }
-
-    binary_operation_(const binary_operation_&) = delete;
-    binary_operation_& operator=(const binary_operation_&) = delete;
-
-    ~binary_operation_()
-    {
-        if (left) delete left;
-        if (right) delete right;
     }
 };
