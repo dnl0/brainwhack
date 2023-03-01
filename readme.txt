@@ -1,7 +1,5 @@
 brainwhack (wip) -- probably the most convoluted BF interpreter out there.
 
-Brainfuck to C translator and interpreter.
-
 to try interpreter do `make interpreter`, if you want to generate C file do `make codegen`.
 
 in case it doesn't work or there's a bug open an issue and include BF source code, or DM me. 
