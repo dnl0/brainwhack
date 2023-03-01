@@ -2,6 +2,8 @@
 
 #include "expr.hpp"
 
+#include <functional>
+
 enum stmt_type_ { expr_stmt_, ctrl_stmt_, input_stmt_, output_stmt_ };
 
 struct statement_ {

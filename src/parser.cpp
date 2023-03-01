@@ -93,6 +93,8 @@ namespace {
              const std::vector <token_>::iterator& source_end,
              std::list <statement_*>& target)
     {
+        using namespace text;
+
         static int bracket_count = 0;
 
         for (; source_begin != source_end; ++source_begin) {

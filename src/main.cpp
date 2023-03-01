@@ -53,6 +53,8 @@ void print_tree(parse_tree& pt)
 #endif // DEBUG
 
 auto main(int argc, char** argv) -> int {
+    using namespace text;
+
     {
         if (argv[1] == NULL) {
             std::cerr << red(bold("\nfatal")) << ": specify a file\n";
