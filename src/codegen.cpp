@@ -32,11 +32,12 @@ namespace {
     {
         for (auto& x: source) {
             target += bf_to_c((*x).id);
-            if ((*x).statement_type == ctrl_stmt_) {
-                if (std::static_pointer_cast <control_statement_> (x)->body.size() > 0) {
-                    append_code(std::static_pointer_cast <control_statement_> (x)->body, target);
-                    target += "}";
-                }
+            if ((*x).statement_type != ctrl_stmt_) {
+                continue;
+            }
+            if (std::static_pointer_cast <control_statement_> (x)->body.size() > 0) {
+                append_code(std::static_pointer_cast <control_statement_> (x)->body, target);
+                target += "}";
             }
         }
     }

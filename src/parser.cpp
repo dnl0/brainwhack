@@ -1,7 +1,5 @@
 #include <parser/parser.hpp>
-#include <utils/text.hpp>
-
-#include <iostream>
+#include <utils/error_handling.hpp>
 
 namespace {
     op_type_
@@ -88,14 +86,13 @@ namespace {
         return new output_statement_ {ch};
     }
     
-    bool 
+    parser_::issue_
     add_stmt(std::vector <token_>::iterator& source_begin, 
              const std::vector <token_>::iterator& source_end,
              std::list <std::shared_ptr <statement_>>& target)
     {
-        using namespace text;
-
         static int bracket_count = 0;
+        static token_ last_opening_bracket {};
 
         for (; source_begin != source_end; ++source_begin) {
             switch ((*source_begin).type) {
@@ -103,6 +100,8 @@ namespace {
                     target.emplace_back(create_ctrl_stmt());
 
                     ++bracket_count;
+                    last_opening_bracket.line = (*source_begin).line;
+                    last_opening_bracket.column = (*source_begin).column;
                     ++source_begin; // skip the bracket
 
                     add_stmt(source_begin, source_end, 
@@ -110,15 +109,14 @@ namespace {
                     break;
                 case bracket_close_:
                     if (!bracket_count) {
-                        std::cerr << red(bold("\nfatal")) << ": unopened bracket\n";
-                        exit(EXIT_FAILURE);
+                        parser_::process_issue(parser_::unopened_bracket_, (*source_begin));
                     }
                     target.back()->terminated = true;
 
                     --bracket_count;
                     ++source_begin;
 
-                    return true;
+                    return parser_::none_;
                 case data_op_:
                 case ptr_op_:
                     target.emplace_back(create_expr_stmt((*source_begin).data));
@@ -134,12 +132,10 @@ namespace {
         }
 
         if (bracket_count) {
-            std::cerr << red(bold("\nfatal")) << ": unclosed bracket\n";
-            exit(EXIT_FAILURE);
-            return false;
+            parser_::process_issue(parser_::unclosed_bracket_, last_opening_bracket);
         }
 
-        return true;
+        return parser_::none_;
     }
 } // namespace
 

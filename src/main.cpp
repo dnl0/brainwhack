@@ -4,7 +4,6 @@
 #include <cstring>
 
 #include <brainwhack.hpp>
-#include <utils/text.hpp>
 
 #ifdef DEBUG_ALL
 
@@ -58,21 +57,19 @@ auto main(int argc, char** argv) -> int {
 
     {
         if (argv[1] == NULL) {
-            std::cerr << red(bold("\nfatal")) << ": specify a file\n";
-            exit(EXIT_FAILURE);
+            main_::process_issue(main_::no_file_);
         }
         int size = strlen(argv[1]);
         if (argv[1][size-3] != '.' ||
             argv[1][size-2] != 'b' ||
-            argv[1][size-1] != 'f') {
-            std::cerr << red(bold("\nfatal")) << ": isn't a .bf file\n";
-            exit(EXIT_FAILURE);
+            argv[1][size-1] != 'f') 
+        {
+            main_::process_issue(main_::not_bf_file_);
         }
     }
     std::ifstream ifile {argv[1], ifile.in };
     if (!ifile) {
-        std::cerr << red(bold("\nfatal")) << ": file " << argv[1] << " not found\n";
-        return -1;
+        main_::process_issue(main_::file_not_found_, argv[1]);
     }
 
     std::stringstream stream_buffer;
@@ -102,8 +99,7 @@ auto main(int argc, char** argv) -> int {
 
     std::ofstream ofile {bf_to_c_filename(argv[1])};
     if (!ofile) {
-        std::cerr << red(bold("\nfatal")) << ": not able to create the output .c file\n"; 
-        exit(EXIT_FAILURE);
+        main_::process_issue(main_::cant_create_c_file);
     }
     ofile << ccode;
     ofile.close();
