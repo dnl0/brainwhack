@@ -21,41 +21,41 @@ namespace {
         return unknwn_;
     }
 
-    expression_statement_*
+    std::shared_ptr <expression_statement_>
     create_expr_stmt(const char ch)
     {
         switch (char2type(ch)) {
             case var_plus_:
             case var_minus_:
                 return  
-                    new expression_statement_ {             \
-                        new binary_operation_ {             \
-                            new integer_literal_ {},        \
-                            assign_,                        \
-                            new binary_operation_ {         \
-                                new integer_literal_ {},    \
-                                char2type(ch),              \
-                                new integer_literal_ {}     \
-                            }                               \
-                        },                                  \
-                        ch                                  \
-                };
+                    std::make_shared <expression_statement_> (
+                        std::make_shared <binary_operation_> (
+                            std::make_shared <integer_literal_> (),
+                            assign_,
+                            std::make_shared <binary_operation_> (
+                                std::make_shared <integer_literal_> (),
+                                char2type(ch),
+                                std::make_shared <integer_literal_> ()
+                            )
+                        ),
+                        ch
+                );
                 break;
             case ptr_plus_:
             case ptr_minus_:
                 return  
-                    new expression_statement_ {             \
-                        new binary_operation_ {             \
-                            new pointer_ {},                \
-                            assign_,                        \
-                            new binary_operation_ {         \
-                                new pointer_ {},            \
-                                char2type(ch),              \
-                                new integer_literal_ {}     \
-                            }                               \
-                        },                                  \
-                        ch                                  \
-                };
+                    std::make_shared <expression_statement_> (
+                        std::make_shared <binary_operation_> (
+                            std::make_shared <pointer_> (),
+                            assign_,
+                            std::make_shared <binary_operation_> (
+                                std::make_shared <pointer_> (),
+                                char2type(ch),
+                                std::make_shared <integer_literal_> ()
+                            )
+                        ),
+                        ch
+                );
                 break;
             default: break;
         }
@@ -63,17 +63,17 @@ namespace {
         return nullptr;
     }
 
-    control_statement_* 
+    std::shared_ptr <control_statement_>
     create_ctrl_stmt()
     {
-        return  new control_statement_ {                    \
-                    new binary_operation_ {                 \
-                        new integer_literal_ {},            \
-                        not_equal_,                         \
-                        new integer_literal_ {}             \
-                    },                                      \
-                    new statement_                          \
-        };
+        return  std::make_shared <control_statement_> (
+                    std::make_shared <binary_operation_> (
+                        std::make_shared <integer_literal_> (),
+                        not_equal_,
+                        std::make_shared <integer_literal_> ()
+                    ),
+                    std::make_shared <statement_> ()
+        );
     }
 
     input_statement_*
@@ -91,7 +91,7 @@ namespace {
     bool 
     add_stmt(std::vector <token_>::iterator& source_begin, 
              const std::vector <token_>::iterator& source_end,
-             std::list <statement_*>& target)
+             std::list <std::shared_ptr <statement_>>& target)
     {
         using namespace text;
 
@@ -106,7 +106,7 @@ namespace {
                     ++source_begin; // skip the bracket
 
                     add_stmt(source_begin, source_end, 
-                             static_cast <control_statement_*> (target.back())->body );
+                             std::static_pointer_cast <control_statement_> (target.back())->body );
                     break;
                 case bracket_close_:
                     if (!bracket_count) {

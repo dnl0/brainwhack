@@ -8,34 +8,14 @@
 
 class parse_tree {
     private:
-        std::list <statement_*> data_ {};
+        std::list <std::shared_ptr <statement_>> data_ {}; // shared_ptr to make casting easier
     public:
         parse_tree() = default;
 
-        parse_tree(const parse_tree& other) = delete;
-        parse_tree& operator=(const parse_tree& other) = delete;
-
-        friend void swap(parse_tree& left, parse_tree& right)
-        {
-            using std::swap;
-
-            swap(left.data_, right.data_);
-        }
-
-        parse_tree(parse_tree&& other)
-        {
-            swap(*this, other);
-        }
-
-        inline std::list <statement_*>& data()              { return data_; };
-        inline statement_* back() const                     { return data_.back(); }
-        inline std::list <statement_*>::iterator begin()    { return data_.begin(); }
-        inline std::list <statement_*>::iterator end()      { return data_.end(); }
-
-        ~parse_tree()
-        {
-            for (auto& x: data_) { delete x; }
-        }
+        inline std::list <std::shared_ptr <statement_>>& data()           { return data_; };
+        inline std::shared_ptr <statement_> back() const                  { return data_.back(); }
+        inline std::list <std::shared_ptr <statement_>>::iterator begin() { return data_.begin(); }
+        inline std::list <std::shared_ptr <statement_>>::iterator end()   { return data_.end(); }
 };
 
 parse_tree parse(const std::vector <token_> data);

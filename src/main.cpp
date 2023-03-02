@@ -34,12 +34,12 @@ void print_vector(const std::vector <token_>&& vec)
     std::cout << "\n";
 }
 
-void print_list(std::list <statement_*> l)
+void print_list(std::list <std::shared_ptr <statement_>> l)
 {
     for (auto& x: l) {
         std::cout << ((*x).id) << " ";
         if ((*x).statement_type == ctrl_stmt_) {
-            print_list( static_cast <control_statement_*> (x)->body );
+            print_list(std::static_pointer_cast <control_statement_> (x)->body );
         }
     }
 }

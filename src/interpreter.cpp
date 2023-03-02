@@ -5,14 +5,14 @@
 #endif
 
 namespace {
-    void exec_expr(expression_* expr, char** ptr)
+    void exec_expr(std::shared_ptr <expression_> expr, char** ptr)
     {
         if (!expr) return;
 
-        switch (expr->expression_type) {
+        switch (expr.get()->expression_type) {
             case bin_op_expr_:
                 {
-                    auto temp = static_cast <binary_operation_*> (expr);
+                    auto temp = std::static_pointer_cast <binary_operation_> (expr);
                     if (temp->left)  { exec_expr(temp->left, ptr);  }
                     if (temp->right) { exec_expr(temp->right, ptr); }
                     switch (temp->operation) {
@@ -36,19 +36,19 @@ namespace {
         }
     }
 
-    void exec_stmt(statement_* stmt, char** ptr)
+    void exec_stmt(std::shared_ptr <statement_> stmt, char** ptr)
     {
         if (!stmt) return;
 
-        switch (stmt->statement_type) {
+        switch (stmt.get()->statement_type) {
             case expr_stmt_:
                 if (stmt->id == '\0') break; // @TODO: '\0' shouldn't appear in the parse tree in the first place!!
                                              //        something went wrong probably!!
-                exec_expr(static_cast <expression_statement_*> (stmt)->body, ptr);
+                exec_expr(std::static_pointer_cast <expression_statement_> (stmt)->body, ptr);
                 break;
             case ctrl_stmt_:
                 {
-                    auto temp = static_cast <control_statement_*> (stmt);
+                    auto temp = std::static_pointer_cast <control_statement_> (stmt);
 
                     while ((**ptr) != 0) {
                         for (auto& x: temp->body) {
@@ -58,15 +58,15 @@ namespace {
                 }
                 break;
             case input_stmt_:
-                static_cast <input_statement_*> (stmt)->input();
+                std::static_pointer_cast <input_statement_> (stmt)->input();
                 break;
             case output_stmt_:
-                static_cast <output_statement_*> (stmt)->output(**ptr);
+                std::static_pointer_cast <output_statement_> (stmt)->output(**ptr);
                 break;
         }
     }
 
-    void run(std::list <statement_*> data, char** ptr)
+    void run(std::list <std::shared_ptr <statement_>> data, char** ptr)
     {
         for (auto& stmt: data) {
             exec_stmt(stmt, ptr);

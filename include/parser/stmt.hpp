@@ -2,12 +2,13 @@
 
 #include "expr.hpp"
 
+#include <memory>
 #include <functional>
 
 enum stmt_type_ { expr_stmt_, ctrl_stmt_, input_stmt_, output_stmt_ };
 
 struct statement_ {
-    expression_* return_expression;
+    std::shared_ptr <expression_> return_expression;
 
     stmt_type_ statement_type;
 
@@ -16,9 +17,9 @@ struct statement_ {
 };
 
 struct expression_statement_ : statement_ {
-    expression_* body = nullptr;
+    std::shared_ptr <expression_> body = nullptr;
 
-    expression_statement_(expression_* u_body, const char u_id = '\0')
+    expression_statement_(std::shared_ptr <expression_>&& u_body, const char u_id = '\0')
         :
         body {u_body}
     {
@@ -27,26 +28,18 @@ struct expression_statement_ : statement_ {
         id = u_id; // this id char is used for debugging,
                    // and has no usage in regular flow
     }
-
-    expression_statement_(const expression_statement_&) = delete;
-    expression_statement_& operator=(const expression_statement_&) = delete;
-
-    ~expression_statement_()
-    {
-        if (return_expression) delete return_expression;
-        if (body) delete body;
-    }
 };
 
 struct control_statement_ : statement_ {
-    std::list <statement_*> body;
-    expression_* condition;
+    std::list <std::shared_ptr <statement_>> body;
+    std::shared_ptr <expression_> condition;
 
-    control_statement_(expression_* u_condition, statement_* u_body, const char u_id = '[')
+    control_statement_(std::shared_ptr <expression_>&& u_condition, 
+            std::shared_ptr <statement_> u_body, const char u_id = '[')
         :
-        condition {u_condition},
-        body {u_body}
+        condition { u_condition }
     {
+        body.emplace_back(u_body);
         id = u_id;
         statement_type = ctrl_stmt_;
         terminated = false;
