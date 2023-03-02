@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 
 #include <brainwhack.hpp>
 #include <utils/text.hpp>
