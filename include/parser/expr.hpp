@@ -34,7 +34,8 @@ struct binary_operation_ : expression_ {
     std::shared_ptr <expression_> right;
     op_type_ operation;
 
-    binary_operation_(expression_ *u_left, op_type_ u_operation, expression_* u_right)
+    binary_operation_(std::shared_ptr <expression_>&& u_left, 
+            op_type_ u_operation, std::shared_ptr <expression_>&& u_right)
         :
         left {u_left},
         right {u_right},

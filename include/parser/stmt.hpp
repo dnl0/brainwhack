@@ -19,7 +19,7 @@ struct statement_ {
 struct expression_statement_ : statement_ {
     std::shared_ptr <expression_> body = nullptr;
 
-    expression_statement_(expression_* u_body, const char u_id = '\0')
+    expression_statement_(std::shared_ptr <expression_>&& u_body, const char u_id = '\0')
         :
         body {u_body}
     {
@@ -32,11 +32,12 @@ struct expression_statement_ : statement_ {
 
 struct control_statement_ : statement_ {
     std::list <std::shared_ptr <statement_>> body;
-    expression_* condition;
+    std::shared_ptr <expression_> condition;
 
-    control_statement_(expression_* u_condition, statement_* u_body, const char u_id = '[')
+    control_statement_(std::shared_ptr <expression_>&& u_condition, 
+            std::shared_ptr <statement_> u_body, const char u_id = '[')
         :
-        condition {u_condition}
+        condition { u_condition }
     {
         body.emplace_back(u_body);
         id = u_id;
