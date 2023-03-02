@@ -19,9 +19,9 @@ struct statement_ {
 struct expression_statement_ : statement_ {
     std::shared_ptr <expression_> body = nullptr;
 
-    expression_statement_(std::shared_ptr <expression_>&& u_body, const char u_id = '\0')
+    expression_statement_(std::shared_ptr <expression_> u_body, const char u_id = '\0')
         :
-        body {u_body}
+        body {std::move(u_body)}
     {
         statement_type = expr_stmt_;
         terminated = true;
@@ -34,12 +34,12 @@ struct control_statement_ : statement_ {
     std::list <std::shared_ptr <statement_>> body;
     std::shared_ptr <expression_> condition;
 
-    control_statement_(std::shared_ptr <expression_>&& u_condition, 
+    control_statement_(std::shared_ptr <expression_> u_condition, 
             std::shared_ptr <statement_> u_body, const char u_id = '[')
         :
-        condition { u_condition }
+        condition {std::move(u_condition)}
     {
-        body.emplace_back(u_body);
+        body.emplace_back(std::move(u_body));
         id = u_id;
         statement_type = ctrl_stmt_;
         terminated = false;
