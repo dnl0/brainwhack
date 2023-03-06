@@ -15,13 +15,19 @@ namespace main_ {
             case not_bf_file_:
                 std::cerr << bold("\nfatal") << ": isn't a .bf file\n";
                 exit(EXIT_FAILURE);
+            case more_than_one_file:
+                std::cerr << bold("\nfatal") << ": can't run more than one file\n";
+                exit(EXIT_FAILURE);
             case file_not_found_:
                 std::cerr << bold("\nfatal") << ": file " << s << " not found\n";
                 exit(EXIT_FAILURE);
-            case cant_create_c_file:
+            case cant_create_c_file_:
                 std::cerr << bold("\nfatal") << ": not able to create the output .c file\n"; 
                 exit(EXIT_FAILURE);
-            default: break;
+            case unknown_options_:
+                std::cerr << bold("\nfatal") << ": unknown options `" << s << "`\n";
+                exit(EXIT_FAILURE);
+            case none_: break;
         }
     }
 } // main_

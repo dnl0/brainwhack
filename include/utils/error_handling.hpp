@@ -7,8 +7,10 @@ namespace main_ {
         none_ = -1,
         no_file_,
         not_bf_file_,
+        more_than_one_file, // @TODO: allow running multiple files
         file_not_found_,
-        cant_create_c_file,
+        cant_create_c_file_,
+        unknown_options_,
     };
 
     void process_issue(issue_, std::string s = "");
