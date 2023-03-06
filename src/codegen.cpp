@@ -44,7 +44,7 @@ namespace {
 } // namespace
 
 std::string 
-codegen(parse_tree&& pt)
+codegen(parse_tree pt)
 {
     std::string result {};
     result += "#include<stdio.h>\nchar array[1000]={0};char *ptr=array;int main(void){";

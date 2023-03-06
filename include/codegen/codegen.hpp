@@ -2,4 +2,4 @@
 
 #include <parser/parser.hpp>
 
-std::string codegen(parse_tree&& u_data);
+std::string codegen(parse_tree u_data);
