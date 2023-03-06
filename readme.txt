@@ -1,4 +1,4 @@
 brainwhack (wip) -- probably the most convoluted BF interpreter out there.
 
-to try interpreter do `make interpreter`, if you want to generate C file do `make codegen`.
-to run it do `./brainwhack <.bf filename>`
+build with `make`, run with `./brainwhack <.bf file>`.
+to translate code to C run `./brainwhack --codegen <.bf file>`.
