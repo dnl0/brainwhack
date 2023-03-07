@@ -1,7 +1,10 @@
 #include <codegen/codegen.hpp>
 
+#include <string>
+
 namespace {
-    void append_code(std::shared_ptr <expression_> expr, std::string& target)
+    void
+    append_code(std::shared_ptr <expression_> expr, std::string& target)
     {
         if (!expr) return;
 
@@ -13,16 +16,20 @@ namespace {
                     if (temp->right) { append_code(temp->right, target); }
                     switch (temp->operation) {
                         case var_plus_:
-                            target += "++*ptr;";
+                            target += "*ptr = *ptr + " + 
+                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
                             break;
                         case var_minus_:
-                            target += "--*ptr;";
+                            target += "*ptr = *ptr - " + 
+                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
                             break;
                         case ptr_plus_:
-                            target += "++ptr;";
+                            target += "ptr = ptr + " + 
+                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
                             break;
                         case ptr_minus_:
-                            target += "--ptr;";
+                            target += "ptr = ptr - " + 
+                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
                             break;
                         default: break;
                     }
@@ -32,7 +39,8 @@ namespace {
         }
     }
 
-    void append_code(std::shared_ptr <statement_> source, std::string& target)
+    void
+    append_code(std::shared_ptr <statement_> source, std::string& target)
     {
         switch (source.get()->statement_type) {
             case expr_stmt_:

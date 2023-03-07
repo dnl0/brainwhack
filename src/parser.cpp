@@ -44,7 +44,7 @@ namespace {
                             std::make_shared <binary_operation_> (
                                 std::make_shared <pointer_> (),
                                 type,
-                                std::make_shared <integer_literal_> ()
+                                std::make_shared <integer_literal_> (value)
                 )));
             default: break;
         }

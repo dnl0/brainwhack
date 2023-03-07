@@ -17,16 +17,16 @@ namespace {
                     if (temp->right) { exec_expr(temp->right, ptr); }
                     switch (temp->operation) {
                         case var_plus_:
-                            ++(**ptr);
+                            **ptr = **ptr + std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
                             break;
                         case var_minus_:
-                            --(**ptr);
+                            **ptr = **ptr - std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
                             break;
                         case ptr_plus_:
-                            ++(*ptr);
+                            *ptr = *ptr + std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
                             break;
                         case ptr_minus_:
-                            --(*ptr);
+                            *ptr = *ptr - std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
                             break;
                         default: break;
                     }
