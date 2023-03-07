@@ -42,9 +42,6 @@ namespace {
 
         switch (stmt.get()->statement_type) {
             case expr_stmt_:
-                // @TODO: '\0' shouldn't appear in the parse tree in the first place!!
-                //        something went wrong probably!!
-                if (stmt->id == '\0') break;
                 exec_expr(std::static_pointer_cast <expression_statement_> (stmt)->body, ptr);
                 break;
             case ctrl_stmt_:
@@ -52,9 +49,7 @@ namespace {
                     auto temp = std::static_pointer_cast <control_statement_> (stmt);
 
                     while ((**ptr) != 0) {
-                        for (auto& x: temp->body) {
-                            exec_stmt(x, ptr);
-                        }
+                        for (auto& x: temp->body) { exec_stmt(x, ptr); }
                     }
                 }
                 break;

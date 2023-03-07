@@ -21,11 +21,11 @@ struct integer_literal_ : expression_ {
 };
 
 struct pointer_ : expression_ {
-    char* ptr;
+    char** ptr;
 
-    pointer_()
+    pointer_(char** u_ptr = nullptr)
         :
-        ptr {nullptr}
+        ptr {u_ptr}
     {
         expression_type = ptr_expr_;
     }
