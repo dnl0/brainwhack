@@ -1,9 +1,9 @@
 #pragma once
 
-#include "expr.hpp"
-
 #include <memory>
 #include <functional>
+
+#include "expr.hpp"
 
 enum stmt_type_ { expr_stmt_, ctrl_stmt_, input_stmt_, output_stmt_ };
 
@@ -26,7 +26,7 @@ struct expression_statement_ : statement_ {
 };
 
 struct control_statement_ : statement_ {
-    std::list <std::shared_ptr <statement_>> body;
+    std::vector <std::shared_ptr <statement_>> body;
     std::shared_ptr <expression_> condition;
 
     control_statement_(std::shared_ptr <expression_> u_condition, 

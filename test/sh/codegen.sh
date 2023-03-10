@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-$PWD/brainwhack --codegen $PWD/brainfuck/hello_world.bf &> /dev/null
+$PWD/../brainwhack --codegen $PWD/brainfuck/hello_world.bf &> /dev/null
 
 if [[ "$?" -eq 0 ]]; then
     gcc $PWD/brainfuck/hello_world.c
@@ -15,7 +15,7 @@ if [[ "$?" -eq 0 ]]; then
     fi
     rm $PWD/a.out
 fi
-rm $PWD/brainfuck/hello_world.c
+rm -f $PWD/brainfuck/hello_world.c
 
 printf "\e[1m\033[31mTEST FAIL\e[0m: \t\t\tCode generation\n"
 exit 125
