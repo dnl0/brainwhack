@@ -16,20 +16,20 @@ namespace {
                     if (temp->right) { append_code(temp->right, target); }
                     switch (temp->operation) {
                         case var_plus_:
-                            target += "*ptr = *ptr + " + 
-                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
+                            target += "*ptr=*ptr+" + 
+                                std::to_string(temp->right->return_expr) + ";";
                             break;
                         case var_minus_:
-                            target += "*ptr = *ptr - " + 
-                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
+                            target += "*ptr=*ptr-" + 
+                                std::to_string(temp->right->return_expr) + ";";
                             break;
                         case ptr_plus_:
-                            target += "ptr = ptr + " + 
-                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
+                            target += "ptr=ptr+" + 
+                                std::to_string(temp->right->return_expr) + ";";
                             break;
                         case ptr_minus_:
-                            target += "ptr = ptr - " + 
-                                std::to_string(std::static_pointer_cast <integer_literal_> (temp->right)->intlit) + ";";
+                            target += "ptr=ptr-" + 
+                                std::to_string(temp->right->return_expr) + ";";
                             break;
                         default: break;
                     }
@@ -47,7 +47,7 @@ namespace {
                 append_code(std::static_pointer_cast <expression_statement_> (source)->body, target);
                 break;
             case ctrl_stmt_:
-                target += "while(*ptr != 0) {";
+                target += "while(*ptr != 0){";
                 {
                     auto temp = std::static_pointer_cast <control_statement_> (source);
 

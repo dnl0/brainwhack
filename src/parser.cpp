@@ -17,7 +17,7 @@ namespace {
     // concrete builder of a variable value/pointer expression
     // (`*ptr = *ptr + 1` or `ptr = ptr + 1`)
     std::shared_ptr <expression_statement_>
-    create_expr_stmt(op_type_ type, int value = 1)
+    create_expr_stmt(op_type_ type, const int& value = 1)
     {
         switch (type) {
             case var_plus_:
@@ -26,10 +26,10 @@ namespace {
                 return  
                     std::make_shared <expression_statement_> (
                         std::make_shared <binary_operation_> (
-                            std::make_shared <integer_literal_> (),
+                            std::make_shared <variable_> (),
                             assign_,
                             std::make_shared <binary_operation_> (
-                                std::make_shared <integer_literal_> (),
+                                std::make_shared <variable_> (),
                                 type,
                                 std::make_shared <integer_literal_> (value)
                 )));
@@ -54,12 +54,12 @@ namespace {
 
     // concrete builder of a while loop (`while (*ptr != 0)`)
     std::shared_ptr <control_statement_>
-    create_ctrl_stmt()
+    create_ctrl_stmt(const int& value = 1)
     {
         return  
             std::make_shared <control_statement_> (
                 std::make_shared <binary_operation_> (
-                    std::make_shared <integer_literal_> (),
+                    std::make_shared <integer_literal_> (value),
                     not_equal_,
                     std::make_shared <integer_literal_> (0)
                 ),
@@ -78,16 +78,30 @@ namespace {
     {
         return new output_statement_ {};
     }
+
+    int 
+    squash_commands(std::vector <token_>::iterator& source_begin,
+                    const std::vector <token_>::iterator& source_end)
+    {
+        int result {1};
+        while (source_begin+1 != source_end &&
+               (*source_begin).type == ((*std::next(source_begin, 1)).type)) {
+            std::advance(source_begin, 1);
+            ++result;
+        }
+        return result;
+    }
     
     parser_::issue_
     add_stmt(std::vector <token_>::iterator& source_begin, 
              const std::vector <token_>::iterator& source_end,
-             std::list <std::shared_ptr <statement_>>& target)
+             std::vector <std::shared_ptr <statement_>>& target)
     {
         using namespace parser_; // for error processing
         static int bracket_count = 0;
         static token_ last_opening_bracket {};
 
+        int inc {1};
         for (; source_begin != source_end; ++source_begin) {
             switch ((*source_begin).type) {
                 case bracket_open_:
@@ -109,8 +123,11 @@ namespace {
                     return none_;
                 case data_op_:
                 case ptr_op_:
+                    // do something to inc
+                    inc = squash_commands(source_begin, source_end);
                     target.emplace_back(
-                        create_expr_stmt(char_to_op_type((*source_begin).data)) );
+                        create_expr_stmt(char_to_op_type((*source_begin).data), inc));
+                    inc = 1;
                     break;
                 case input_cmd_:
                     target.emplace_back(create_in_stmt());
@@ -122,7 +139,7 @@ namespace {
             }
         }
 
-        if (bracket_count) { process_issue(unclosed_bracket_, last_opening_bracket); }
+        if (bracket_count != 0) { process_issue(unclosed_bracket_, last_opening_bracket); }
         return none_;
     }
 } // namespace
@@ -134,7 +151,7 @@ parse(std::vector <token_> data)
 
     auto begin = data.begin();
     auto end = data.end();
-    add_stmt(std::ref(begin), std::ref(end), pt.data());
+    add_stmt(std::ref(begin), std::ref(end), pt.data_);
 
     return pt;
 }

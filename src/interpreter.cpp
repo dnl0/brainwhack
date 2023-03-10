@@ -17,16 +17,16 @@ namespace {
                     if (temp->right) { exec_expr(temp->right, ptr); }
                     switch (temp->operation) {
                         case var_plus_:
-                            **ptr = **ptr + std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
+                            **ptr = **ptr + temp->right->return_expr;
                             break;
                         case var_minus_:
-                            **ptr = **ptr - std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
+                            **ptr = **ptr - temp->right->return_expr;
                             break;
                         case ptr_plus_:
-                            *ptr = *ptr + std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
+                            *ptr = *ptr + temp->right->return_expr;
                             break;
                         case ptr_minus_:
-                            *ptr = *ptr - std::static_pointer_cast <integer_literal_> (temp->right)->intlit;
+                            *ptr = *ptr - temp->right->return_expr;
                             break;
                         default: break;
                     }
@@ -62,7 +62,7 @@ namespace {
         }
     }
 
-    void run(std::list <std::shared_ptr <statement_>> data, char** ptr)
+    void run(std::vector <std::shared_ptr <statement_>> data, char** ptr)
     {
         for (auto& stmt: data) {
             exec_stmt(stmt, ptr);
