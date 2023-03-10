@@ -21,3 +21,5 @@ else
     printf "\n\e[1mfailed tests: \033[32m$FAIL\e[0m"
 fi
 
+printf "\n"
+

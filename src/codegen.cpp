@@ -1,44 +1,66 @@
 #include <codegen/codegen.hpp>
 
+#include <string>
+
 namespace {
-    std::string
-    bf_to_c(const char ch)
+    void
+    append_code(std::shared_ptr <expression_> expr, std::string& target)
     {
-        switch (ch) {
-            case '>':
-                return "++ptr;";
-            case '<':
-                return "--ptr;";
-            case '+':
-                return "++*ptr;";
-            case '-':
-                return "--*ptr;";
-            case '.':
-                return "putchar(*ptr);";
-            case ',':
-                return "*ptr = getchar();";
-            case '[':
-                return "while(*ptr != 0){";
-            case ']':
-                return "}";
+        if (!expr) return;
+
+        switch (expr.get()->expression_type) {
+            case bin_op_expr_:
+                {
+                    auto temp = std::static_pointer_cast <binary_operation_> (expr);
+                    if (temp->left)  { append_code(temp->left, target);  }
+                    if (temp->right) { append_code(temp->right, target); }
+                    switch (temp->operation) {
+                        case var_plus_:
+                            target += "*ptr=*ptr+" + 
+                                std::to_string(temp->right->return_expr) + ";";
+                            break;
+                        case var_minus_:
+                            target += "*ptr=*ptr-" + 
+                                std::to_string(temp->right->return_expr) + ";";
+                            break;
+                        case ptr_plus_:
+                            target += "ptr=ptr+" + 
+                                std::to_string(temp->right->return_expr) + ";";
+                            break;
+                        case ptr_minus_:
+                            target += "ptr=ptr-" + 
+                                std::to_string(temp->right->return_expr) + ";";
+                            break;
+                        default: break;
+                    }
+                }
+                break;
             default: break;
         }
-
-        return "";
     }
 
-    void 
-    append_code(std::list <std::shared_ptr <statement_>> source, std::string& target)
+    void
+    append_code(std::shared_ptr <statement_> source, std::string& target)
     {
-        for (auto& x: source) {
-            target += bf_to_c((*x).id);
-            if ((*x).statement_type != ctrl_stmt_) {
-                continue;
-            }
-            if (std::static_pointer_cast <control_statement_> (x)->body.size() > 0) {
-                append_code(std::static_pointer_cast <control_statement_> (x)->body, target);
+        switch (source.get()->statement_type) {
+            case expr_stmt_:
+                append_code(std::static_pointer_cast <expression_statement_> (source)->body, target);
+                break;
+            case ctrl_stmt_:
+                target += "while(*ptr != 0){";
+                {
+                    auto temp = std::static_pointer_cast <control_statement_> (source);
+
+                    for (auto& x: temp->body) { append_code(x, target); }
+                }
                 target += "}";
-            }
+                break;
+            case input_stmt_:
+                target += "getchar(*ptr);";
+                break;
+            case output_stmt_:
+                target += "putchar(*ptr);";
+                break;
         }
     }
 } // namespace
@@ -49,7 +71,9 @@ codegen(parse_tree pt)
     std::string result {};
     result += "#include<stdio.h>\nchar array[1000]={0};char *ptr=array;int main(void){";
 
-    append_code(pt.data(), result);
+    for (auto& x: pt.data()) {
+        append_code(x, result);
+    }
 
     result += "}";
     return result;

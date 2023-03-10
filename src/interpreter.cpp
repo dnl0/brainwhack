@@ -17,16 +17,16 @@ namespace {
                     if (temp->right) { exec_expr(temp->right, ptr); }
                     switch (temp->operation) {
                         case var_plus_:
-                            ++(**ptr);
+                            **ptr = **ptr + temp->right->return_expr;
                             break;
                         case var_minus_:
-                            --(**ptr);
+                            **ptr = **ptr - temp->right->return_expr;
                             break;
                         case ptr_plus_:
-                            ++(*ptr);
+                            *ptr = *ptr + temp->right->return_expr;
                             break;
                         case ptr_minus_:
-                            --(*ptr);
+                            *ptr = *ptr - temp->right->return_expr;
                             break;
                         default: break;
                     }
@@ -42,9 +42,6 @@ namespace {
 
         switch (stmt.get()->statement_type) {
             case expr_stmt_:
-                // @TODO: '\0' shouldn't appear in the parse tree in the first place!!
-                //        something went wrong probably!!
-                if (stmt->id == '\0') break;
                 exec_expr(std::static_pointer_cast <expression_statement_> (stmt)->body, ptr);
                 break;
             case ctrl_stmt_:
@@ -52,9 +49,7 @@ namespace {
                     auto temp = std::static_pointer_cast <control_statement_> (stmt);
 
                     while ((**ptr) != 0) {
-                        for (auto& x: temp->body) {
-                            exec_stmt(x, ptr);
-                        }
+                        for (auto& x: temp->body) { exec_stmt(x, ptr); }
                     }
                 }
                 break;
@@ -67,7 +62,7 @@ namespace {
         }
     }
 
-    void run(std::list <std::shared_ptr <statement_>> data, char** ptr)
+    void run(std::vector <std::shared_ptr <statement_>> data, char** ptr)
     {
         for (auto& stmt: data) {
             exec_stmt(stmt, ptr);
