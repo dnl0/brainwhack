@@ -1,7 +1,113 @@
 #include <parser/parser.hpp>
 #include <utils/error_handling.hpp>
 
-namespace {
+#include <iostream>
+
+namespace { // vague builder functions
+    std::shared_ptr <integer_literal_>
+    build_integer_literal_expr(int value)
+    {
+        return std::make_shared <integer_literal_> (value);
+    }
+
+    std::shared_ptr <pointer_>
+    build_pointer_expr(char* ptr = nullptr)
+    {
+        return std::make_shared <pointer_> (ptr);
+    }
+
+    std::shared_ptr <variable_>
+    build_variable_expr(const std::string& id = "", int value = 0)
+    {
+        return std::make_shared <variable_> (id, value);
+    }
+
+    std::shared_ptr <binary_operation_>
+    build_bin_op_expr(std::shared_ptr <expression_> left,
+                      op_type_ operation,
+                      std::shared_ptr <expression_> right)
+    {
+        return std::make_shared <binary_operation_> (left, operation, right);
+    }
+
+    std::shared_ptr <expression_statement_>
+    build_expr_stmt(std::shared_ptr <expression_> body)
+    {
+        return std::make_shared <expression_statement_> (body);
+    }
+
+    std::shared_ptr <control_statement_>
+    build_ctrl_stmt(std::shared_ptr <expression_> condition_value_left, 
+                    op_type_ operation,
+                    std::shared_ptr <expression_> condition_value_right)
+    {
+        return std::make_shared <control_statement_> (
+               build_bin_op_expr(condition_value_left, operation, condition_value_right),
+               std::make_shared <statement_> ());
+    }
+
+    std::shared_ptr <input_statement_>
+    build_input_stmt()
+    {
+        return std::make_shared <input_statement_> ();
+    }
+
+    std::shared_ptr <output_statement_>
+    build_output_stmt()
+    {
+        return std::make_shared <output_statement_> ();
+    }
+} // namespace
+
+namespace { // concrete builder functions
+    // while (*ptr != 0) { <body> }
+    std::shared_ptr <control_statement_>
+    concrete_build_bf_loop()
+    {
+        return build_ctrl_stmt(
+                build_variable_expr(),
+                not_equal_,
+                build_integer_literal_expr(0));
+    }
+
+    // *ptr = *ptr <operation> <increment>
+    std::shared_ptr <expression_statement_>
+    concrete_build_bf_val_operation(op_type_ operation, int increment)
+    {
+        return build_expr_stmt(
+                build_bin_op_expr(
+                    build_variable_expr(),
+                    operation,
+                    build_integer_literal_expr(increment)));
+    }
+
+    // ptr = ptr <operation> <increment>
+    std::shared_ptr <expression_statement_>
+    concrete_build_bf_ptr_operation(op_type_ operation, int increment)
+    {
+        return build_expr_stmt(
+                build_bin_op_expr(
+                    build_pointer_expr(),
+                    operation,
+                    build_integer_literal_expr(increment)));
+    }
+
+    // user input
+    std::shared_ptr <input_statement_>
+    concrete_build_bf_input()
+    {
+        return build_input_stmt();
+    }
+
+    // print value
+    std::shared_ptr <output_statement_>
+    concrete_build_bf_output()
+    {
+        return build_output_stmt();
+    }
+} // namespace
+
+namespace { // the rest
     op_type_
     char_to_op_type (const char ch)
     {
@@ -12,71 +118,6 @@ namespace {
             case '<': return ptr_minus_;
         }
         return unknwn_;
-    }
-
-    // concrete builder of a variable value/pointer expression
-    // (`*ptr = *ptr + 1` or `ptr = ptr + 1`)
-    std::shared_ptr <expression_statement_>
-    create_expr_stmt(op_type_ type, const int& value = 1)
-    {
-        switch (type) {
-            case var_plus_:
-            case var_minus_:
-                // create a variable value binary operation
-                return  
-                    std::make_shared <expression_statement_> (
-                        std::make_shared <binary_operation_> (
-                            std::make_shared <variable_> (),
-                            assign_,
-                            std::make_shared <binary_operation_> (
-                                std::make_shared <variable_> (),
-                                type,
-                                std::make_shared <integer_literal_> (value)
-                )));
-            case ptr_plus_:
-            case ptr_minus_:
-                // create a pointer binary operation
-                return  
-                    std::make_shared <expression_statement_> (
-                        std::make_shared <binary_operation_> (
-                            std::make_shared <pointer_> (),
-                            assign_,
-                            std::make_shared <binary_operation_> (
-                                std::make_shared <pointer_> (),
-                                type,
-                                std::make_shared <integer_literal_> (value)
-                )));
-            default: break;
-        }
-
-        return nullptr;
-    }
-
-    // concrete builder of a while loop (`while (*ptr != 0)`)
-    std::shared_ptr <control_statement_>
-    create_ctrl_stmt(const int& value = 1)
-    {
-        return  
-            std::make_shared <control_statement_> (
-                std::make_shared <binary_operation_> (
-                    std::make_shared <integer_literal_> (value),
-                    not_equal_,
-                    std::make_shared <integer_literal_> (0)
-                ),
-                std::make_shared <statement_> ()
-        );
-    }
-
-    input_statement_*
-    create_in_stmt()
-    {
-        return new input_statement_ {};
-    }
-
-    output_statement_*
-    create_out_stmt()
-    {
-        return new output_statement_ {};
     }
 
     int 
@@ -101,11 +142,11 @@ namespace {
         static int bracket_count = 0;
         static token_ last_opening_bracket {};
 
-        int inc {1};
+        int increment {};
         for (; source_begin != source_end; ++source_begin) {
             switch ((*source_begin).type) {
                 case bracket_open_:
-                    target.emplace_back(create_ctrl_stmt());
+                    target.emplace_back(concrete_build_bf_loop());
                     ++bracket_count;
                     last_opening_bracket.line = (*source_begin).line;
                     last_opening_bracket.column = (*source_begin).column;
@@ -122,18 +163,26 @@ namespace {
                     ++source_begin; // skip the bracket
                     return none_;
                 case data_op_:
-                case ptr_op_:
-                    // do something to inc
-                    inc = squash_commands(source_begin, source_end);
+                    increment = squash_commands(source_begin, source_end);
                     target.emplace_back(
-                        create_expr_stmt(char_to_op_type((*source_begin).data), inc));
-                    inc = 1;
+                        concrete_build_bf_val_operation(
+                                char_to_op_type((*source_begin).data),
+                                increment));
+                    increment = 0;
+                    break;
+                case ptr_op_:
+                    increment = squash_commands(source_begin, source_end);
+                    target.emplace_back(
+                        concrete_build_bf_ptr_operation(
+                                char_to_op_type((*source_begin).data),
+                                increment));
+                    increment = 0;
                     break;
                 case input_cmd_:
-                    target.emplace_back(create_in_stmt());
+                    target.emplace_back(concrete_build_bf_input());
                     break;
                 case output_cmd_:
-                    target.emplace_back(create_out_stmt());
+                    target.emplace_back(concrete_build_bf_output());
                     break;
                 default: break;
             }
