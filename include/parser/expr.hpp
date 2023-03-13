@@ -40,7 +40,7 @@ struct variable_ : expression_ {
     std::string id;
     int value;
 
-    variable_(const std::string& u_id = "", const int& u_value = 0)
+    variable_(const std::string& u_id = "", int u_value = 0)
         :
         id {u_id},
         value {u_value}
@@ -56,7 +56,8 @@ struct binary_operation_ : expression_ {
     op_type_ operation;
 
     binary_operation_(std::shared_ptr <expression_> u_left, 
-            op_type_ u_operation, std::shared_ptr <expression_> u_right)
+                      op_type_ u_operation, 
+                      std::shared_ptr <expression_> u_right)
         :
         left {std::move(u_left)},
         operation {u_operation},
