@@ -1,3 +1,1 @@
-most of these are taken from wikipedia
-
-https://en.wikipedia.org/wiki/Brainfuck
+help wanted: write a working bf script and (if possible) shell script to test it.
