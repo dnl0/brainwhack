@@ -6,8 +6,7 @@ CXXFLAGS := -std=c++17
 HEADER := include
 SOURCE := $(wildcard src/*.cpp)
 
-.PHONY: main
-main:
+all:
 	$(CXX) $(CXXFLAGS) -I$(HEADER) $(SOURCE) -o $(TARGET)
 
 .PHONY: clean
