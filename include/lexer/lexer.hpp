@@ -13,4 +13,4 @@ struct token_ {
     size_t column;
 };
 
-std::vector <token_> lex(std::string input);
+std::vector <token_> lex(const std::string& input);

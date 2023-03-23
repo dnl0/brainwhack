@@ -70,7 +70,7 @@ namespace {
     }
 } // namespace
 
-void interpret(parse_tree pt)
+void interpret(const parse_tree& pt)
 {
     char arr[ARRAY_CAPACITY_];
     std::fill(arr, arr+ARRAY_CAPACITY_, 0);

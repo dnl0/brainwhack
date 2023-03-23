@@ -194,7 +194,7 @@ namespace { // the rest
 } // namespace
 
 parse_tree
-parse(std::vector <token_> data)
+parse(std::vector <token_>&& data)
 {
     parse_tree pt {};
 

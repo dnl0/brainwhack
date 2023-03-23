@@ -66,12 +66,12 @@ namespace {
 } // namespace
 
 std::string 
-codegen(parse_tree pt)
+codegen(const parse_tree& pt)
 {
     std::string result {};
     result += "#include<stdio.h>\nchar array[1000]={0};char *ptr=array;int main(void){";
 
-    for (auto& x: pt.data()) {
+    for (const auto& x: pt.data()) {
         append_code(x, result);
     }
 

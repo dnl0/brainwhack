@@ -56,7 +56,7 @@ namespace {
     }
 } // namespace
 
-std::vector <token_> lex(std::string input)
+std::vector <token_> lex(const std::string& input)
 {
     std::vector <token_> result {};
     for (auto& x: input) {

@@ -2,4 +2,4 @@
 
 #include <parser/parser.hpp>
 
-void interpret(parse_tree pt);
+void interpret(const parse_tree& pt);

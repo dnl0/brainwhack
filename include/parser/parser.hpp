@@ -12,12 +12,12 @@ class parse_tree {
     public:
         parse_tree() = default;
 
-        const std::vector <std::shared_ptr <statement_>>& data()        { return data_; };
+        const std::vector <std::shared_ptr <statement_>>& data() const  { return data_; };
         std::shared_ptr <statement_> back() const                       { return data_.back(); }
         std::vector <std::shared_ptr <statement_>>::iterator begin()    { return data_.begin(); }
         std::vector <std::shared_ptr <statement_>>::iterator end()      { return data_.end(); }
 
-        friend parse_tree parse(const std::vector <token_> data);
+        friend parse_tree parse(std::vector <token_>&& data);
 };
 
-parse_tree parse(const std::vector <token_> data);
+parse_tree parse(std::vector <token_>&& data);
