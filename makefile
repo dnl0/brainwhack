@@ -1,7 +1,7 @@
 TARGET := brainwhack
 
 CXX := g++
-CXXFLAGS := -std=c++17
+CXXFLAGS := -std=c++17 -DCMAKE_EXPORT_COMPILE_COMMANDS=1
 
 HEADER := include
 SOURCE := $(wildcard src/*.cpp)

@@ -1,7 +1,7 @@
 #include <utils/text.hpp>
 
 #define COLOR_PREFIX "\033"
-#define RESET "\e[0m"
+#define RESET "\033[0m"
 
 namespace text {
     std::string bold(std::string&& s)
