@@ -5,7 +5,7 @@
 
 #include "expr.hpp"
 
-enum stmt_type_ { expr_stmt_, ctrl_stmt_, input_stmt_, output_stmt_ };
+enum stmt_type_ { expr_stmt_ = 1, ctrl_stmt_, input_stmt_, output_stmt_ };
 
 struct statement_ {
     std::shared_ptr <expression_> return_expression; // @TODO
