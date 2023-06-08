@@ -4,8 +4,8 @@
 #include <string>
 #include <cstdint>
 
-enum op_type_   { unknwn_ = -1, ptr_plus_, var_plus_, ptr_minus_, var_minus_, assign_, not_equal_ };
-enum expr_type_ { int_lit_expr_, bin_op_expr_, ptr_expr_, var_expr_ };
+enum op_type_   { unknwn_ = -1, ptr_plus_ = 1, var_plus_, ptr_minus_, var_minus_, assign_, not_equal_ };
+enum expr_type_ { int_lit_expr_ = 1, bin_op_expr_, ptr_expr_, var_expr_ };
 
 struct expression_ {
     intptr_t return_expr;
@@ -58,11 +58,10 @@ struct binary_operation_ : expression_ {
     binary_operation_(std::shared_ptr <expression_> u_left, 
                       op_type_ u_operation, 
                       std::shared_ptr <expression_> u_right)
-        :
-        left {std::move(u_left)},
-        operation {u_operation},
-        right {std::move(u_right)}
     {
+        left = std::move(u_left);
+        operation = u_operation;
+        right = std::move(u_right);
         expression_type = bin_op_expr_;
     }
 };

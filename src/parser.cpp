@@ -1,8 +1,6 @@
 #include <parser/parser.hpp>
 #include <utils/error_handling.hpp>
 
-#include <iostream>
-
 namespace { // vague builder functions
     std::shared_ptr <integer_literal_>
     build_integer_literal_expr(int value)
@@ -155,6 +153,7 @@ namespace { // the rest
                     // control statement and exit once the closing bracket appears
                     add_stmt(source_begin, source_end, 
                             std::static_pointer_cast <control_statement_> (target.back())->body);
+                    --source_begin;
                     break;
                 case bracket_close_:
                     if (!bracket_count) { process_issue(unopened_bracket_, (*source_begin)); }

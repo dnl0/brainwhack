@@ -1,11 +1,12 @@
 #include <interpreter/interpreter.hpp>
+#include <iostream>
 
 #ifndef ARRAY_CAPACITY_
 #define ARRAY_CAPACITY_ 3000
 #endif
 
 namespace {
-    void exec_expr(std::shared_ptr <expression_> expr, char** ptr)
+    void exec_expr(std::shared_ptr <expression_> expr, int** ptr)
     {
         if (!expr) return;
 
@@ -36,7 +37,7 @@ namespace {
         }
     }
 
-    void exec_stmt(std::shared_ptr <statement_> stmt, char** ptr)
+    void exec_stmt(std::shared_ptr <statement_> stmt, int** ptr)
     {
         if (!stmt) return;
 
@@ -54,7 +55,7 @@ namespace {
                 }
                 break;
             case input_stmt_:
-                std::static_pointer_cast <input_statement_> (stmt)->input();
+                **ptr = std::static_pointer_cast <input_statement_> (stmt)->input();
                 break;
             case output_stmt_:
                 std::static_pointer_cast <output_statement_> (stmt)->output(**ptr);
@@ -62,7 +63,7 @@ namespace {
         }
     }
 
-    void run(std::vector <std::shared_ptr <statement_>> data, char** ptr)
+    void run(std::vector <std::shared_ptr <statement_>> data, int** ptr)
     {
         for (auto& stmt: data) {
             exec_stmt(stmt, ptr);
@@ -72,9 +73,9 @@ namespace {
 
 void interpret(const parse_tree& pt)
 {
-    char arr[ARRAY_CAPACITY_];
+    int arr[ARRAY_CAPACITY_];
     std::fill(arr, arr+ARRAY_CAPACITY_, 0);
-    char* ptr = arr;
+    int* ptr = arr;
 
     run(pt.data(), &ptr);
 }

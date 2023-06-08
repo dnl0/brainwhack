@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-enum lexem_type_ { comment_ = -1, ptr_op_, data_op_, input_cmd_, output_cmd_, bracket_open_, bracket_close_ };
+enum lexem_type_ { comment_ = -1, ptr_op_ = 1, data_op_, input_cmd_, output_cmd_, bracket_open_, bracket_close_ };
 
 struct token_ {
     char data;

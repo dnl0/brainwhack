@@ -5,7 +5,7 @@
 namespace main_ {
     enum issue_ {
         none_ = -1,
-        no_file_,
+        no_file_ = 1,
         not_bf_file_,
         more_than_one_file, // @TODO: allow running multiple files
         file_not_found_,
@@ -19,7 +19,7 @@ namespace main_ {
 namespace parser_ {
     enum issue_ { 
         none_ = -1, 
-        unopened_bracket_, 
+        unopened_bracket_ = 1,
         unclosed_bracket_,
     };
 
@@ -29,7 +29,7 @@ namespace parser_ {
 namespace interpreter_ {
     enum issue_ {
         none_ = -1,
-        unknown_id,
+        unknown_id = 1,
     };
 
     void process_issue(issue_, token_);

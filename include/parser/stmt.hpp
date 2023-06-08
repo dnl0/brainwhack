@@ -45,7 +45,7 @@ struct input_statement_: statement_ {
 
     input_statement_()
     {
-        statement_type = output_stmt_;
+        statement_type = input_stmt_;
     }
 };
 
